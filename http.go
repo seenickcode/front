@@ -31,7 +31,7 @@ func httpCallWithHeaders(method string, url string, body io.Reader, headers map[
 		req.Header.Add(k, v)
 	}
 	client := &http.Client{}
-	fmt.Printf(">>>>>>>>>>>> %+v", req)
+	//fmt.Printf(">>>>>>>>>>>> %+v", req)
 	resp, err := client.Do(req)
 	if resp.Body != nil {
 		defer resp.Body.Close()
