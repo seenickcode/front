@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-type FrontEventPreview struct {
+type EventPreview struct {
 	Links struct {
 		Self string `json:"self"`
 	} `json:"_links"`
@@ -46,9 +46,9 @@ type FrontEventPreview struct {
 	} `json:"conversation"`
 }
 
-func NewFrontEventPreviewFromRequest(r *http.Request) (e *FrontEventPreview, err error) {
+func NewEventPreviewFromRequest(r *http.Request) (e *EventPreview, err error) {
 	body, err := ioutil.ReadAll(r.Body)
-	var obj FrontEventPreview
+	var obj EventPreview
 	if len(string(body)) > 0 {
 		if err := json.Unmarshal(body, &obj); err != nil {
 			return nil, err
