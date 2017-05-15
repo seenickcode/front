@@ -4,7 +4,7 @@ import "fmt"
 
 const (
 	FrontHostname     = "https://api2.frontapp.com"
-	FrontBaseEndpoint = "/"
+	FrontBaseEndpoint = ""
 )
 
 type Front struct {

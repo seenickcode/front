@@ -8,16 +8,6 @@ import (
 )
 
 type Conversation struct {
-	Links struct {
-		Self    string `json:"self"`
-		Related struct {
-			Events    string `json:"events"`
-			Followers string `json:"followers"`
-			Messages  string `json:"messages"`
-			Comments  string `json:"comments"`
-			Inboxes   string `json:"inboxes"`
-		} `json:"related"`
-	} `json:"_links"`
 	ID       string `json:"id"`
 	Subject  string `json:"subject"`
 	Status   string `json:"status"`
@@ -112,6 +102,14 @@ type Conversation struct {
 	CreatedAt float64 `json:"created_at"`
 }
 
+type ConversationStatus string
+
+const (
+	ConversationStatusOpen       = "open"
+	ConversationStatusUnassigned = "unassigned"
+	ConversationStatusArchived   = "archived"
+)
+
 // FetchConversation .
 func (f *Front) FetchConversation(id string) (c *Conversation, err error) {
 	endpoint := fmt.Sprintf("%s%s/conversations/%s", FrontHostname, FrontBaseEndpoint, id)
@@ -120,12 +118,30 @@ func (f *Front) FetchConversation(id string) (c *Conversation, err error) {
 		return
 	}
 	if status != http.StatusOK {
-		err = fmt.Errorf("posting Front conversation message failed with status %v: %v", status, string(data))
+		err = fmt.Errorf("fetching Front conversation failed with status %v: %v", status, string(data))
 		return
 	}
 	c = &Conversation{}
 	err = json.Unmarshal(data, &c)
 	if err != nil {
+		return
+	}
+	return
+}
+
+// UpdateConversation .
+func (f *Front) UpdateConversation(id string, params interface{}) (err error) {
+	endpoint := fmt.Sprintf("%s%s/conversations/%s", FrontHostname, FrontBaseEndpoint, id)
+	paramBytes, err := json.Marshal(params)
+	if err != nil {
+		return
+	}
+	data, status, err := httpCallWithAuthToken("PATCH", endpoint, bytes.NewBuffer(paramBytes), f.jwtToken)
+	if err != nil {
+		return
+	}
+	if status != http.StatusNoContent {
+		err = fmt.Errorf("updating Front conversation failed with status %v: %v", status, string(data))
 		return
 	}
 	return
